@@ -1,0 +1,63 @@
+from urllib2 import urlopen
+ 
+from bs4 import BeautifulSoup
+
+"""This is a simple search of an HTML page using the BeautifulSoup module.  The user has the choice to either pull all the of the links from the page or to only pull links with a given search term. I'm sure this could be improved by a lot, please let me know! 
+
+AUTHOR: MICHAEL C. CHAN
+"""
+##This is the start function, where the user chooses to pull all of the links or narrow them by a search term
+
+def startSoup():
+	AllorSearch = raw_input("Do you want all of the links on the page or do you want to narrow the links with a search term? Please enter 'all' or 'search' >>>")
+
+	if 'search' in AllorSearch:
+		return ChosenLinks()
+	
+	elif 'all' in AllorSearch:
+		return AlltheLinks()
+	else:
+		#catches errors in user input and returns to start point
+		print "please type 'search' or 'all' thanks!" 
+		return startSoup()	
+
+# This function gets two inputs from the user: 1. the web address and 2. search term. It then only returns the links with the search term. 
+def ChosenLinks():
+	
+	GetWebAddress = raw_input("Type in the web address you want to scrape. Format has to be 'http://www.example.com' >>>")
+
+	SearchTerm = raw_input("Type in the search term you are looking for >>>")
+ 
+	webpage = urlopen(GetWebAddress).read() # opens the webpage 
+
+	soup = BeautifulSoup(webpage) #Parses the page 
+
+	linkage = soup.find_all('a') #Returns all the html with <a>
+	
+	for link in linkage:
+		articleLink = link.get('href') #Returns text version of all html links 
+		if SearchTerm in articleLink:  #sorts links with search term
+			print articleLink
+		else:
+			print "No links were found with the string, %s" % SearchTerm
+			return startSoup()
+				
+		print '\n'
+
+#This function only gets one input from user, the web address. It prints out all the links on the page
+def AlltheLinks():   
+	#get the webpage  address from user using raw input
+	GetWebAddress = raw_input("Type in the web address you want to scrape. 	Format has to be 'http://www.example.com' >>>")
+
+	webpage = urlopen(GetWebAddress).read() #open the page 
+
+	soup = BeautifulSoup(webpage) #Parses the page 
+
+	linkage = soup.find_all('a')  #Returns all the html with <a>
+
+	for link in linkage:
+		articleLink = link.get('href') #Returns text version of all html links 
+		print articleLink
+		print '\n'
+			
+startSoup() # Starts the program soupscraper3.py
